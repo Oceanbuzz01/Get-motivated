@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics=""><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="styles.css"><style>body{margin:0;background:#e9dcc6;font-family:"Figtree",system-ui,sans-serif}a{color:#8c491a}a:hover{color:#643312}.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}.dv-opts{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:12px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.6)}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}.dv-next{margin:28px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.55)}</style></helmet>
+<section class="dv-turn" id="t1">
+<div class="dv-thd" style="background: url(&quot;./kanenori-sea-5499649_1920-murk8chh-bls3.jpg&quot;) center / cover no-repeat"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Hoofdscherm — drie richtingen, Organic design system</span></div>
+<p style="margin:0 0 28px;max-width:640px;font-size:13px;line-height:1.55;color:rgba(0,0,0,.6);text-wrap:pretty">Aannames: Nederlands, warme toon, mindset-tips, Android. Elke richting is live: sleep de kaart naar rechts om te bewaren, naar links voor later — of gebruik de knoppen. "We can do this." gebruik ik als merkregel.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Zachte kaart — klassieke stapel, Material-navigatie</div>
+<div style="width:376px;height:796px;background:#201e1d;border-radius:44px;padding:8px;box-shadow:var(--shadow-lg)">
+<div style="position:relative;width:360px;height:780px;border-radius:36px;overflow:hidden;background:var(--color-bg);display:flex;flex-direction:column;font-family:var(--font-body);color:var(--color-text)">
+<div style="position: relative; height: 32px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 13px; font-weight: 600; background: url(&quot;./kanenori-sea-5499649_1920-murk9q0y-xu9h.jpg&quot;) center / cover no-repeat"><span>8:12</span><div style="position:absolute;left:50%;top:10px;width:11px;height:11px;margin-left:-5px;border-radius:50%;background:#201e1d"></div><div style="display:flex;gap:5px;align-items:center"><div style="width:13px;height:10px;border-radius:2px;background:currentColor;opacity:.75"></div><div style="width:20px;height:10px;border-radius:3px;border:1.5px solid currentColor"></div></div></div>
+<div style="padding: 14px 24px 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; background: url(&quot;./kanenori-sea-5499649_1920-murkaagy-mn59.jpg&quot;) center / contain no-repeat">
+<div><div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Zaterdag 3 oktober</div><div style="font-family:var(--font-heading);font-size:28px;line-height:1.1;margin-top:4px">Jouw tips van vandaag</div></div>
+<button onClick="{{ a.undo }}" class="btn btn-secondary btn-icon" style="width:44px;height:44px;flex:none" title="Vorige"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg></button>
+</div>
+<div style="position:relative;flex:1;margin:10px 22px 0">
+<sc-for list="{{ a.cards }}" as="c" hint-placeholder-count="3">
+<div onPointerDown="{{ c.down }}" onPointerMove="{{ c.move }}" onPointerUp="{{ c.up }}" onPointerCancel="{{ c.up }}" style="position:absolute;inset:0 0 18px;touch-action:none;user-select:none;cursor:grab;background:var(--color-neutral-100);border-radius:32px;box-shadow:var(--shadow-md);padding:26px 26px 24px;display:flex;flex-direction:column;gap:14px;transform-origin:50% 100%;transform:{{ c.transform }};transition:{{ c.transition }};z-index:{{ c.z }}">
+<div style="display:flex;align-items:center;justify-content:space-between"><span class="tag tag-accent">{{ c.tag }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ c.n }} / {{ c.total }}</span></div>
+<div style="flex:1"></div>
+<div style="font-family:var(--font-heading);font-size:30px;line-height:1.1;letter-spacing:-.01em;text-wrap:pretty">{{ c.title }}</div>
+<div style="font-size:16px;line-height:1.5;color:var(--color-neutral-800);text-wrap:pretty">{{ c.body }}</div>
+<div style="position:absolute;top:22px;left:22px;padding:6px 14px;border-radius:999px;border:2px solid var(--color-accent-2-600);color:var(--color-accent-2-700);background:var(--color-accent-2-100);font-weight:700;font-size:13px;transform:rotate(-8deg);opacity:{{ c.likeOp }}">Bewaard</div>
+<div style="position:absolute;top:22px;right:22px;padding:6px 14px;border-radius:999px;border:2px solid var(--color-neutral-500);color:var(--color-neutral-800);background:var(--color-neutral-200);font-weight:700;font-size:13px;transform:rotate(8deg);opacity:{{ c.nopeOp }}">Later</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;align-items:center;justify-content:center;gap:22px;padding:14px 0 16px">
+<button onClick="{{ a.skip }}" class="btn btn-secondary" style="width:56px;height:56px;padding:0;border-radius:50%;background:var(--color-neutral-100)" title="Later"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+<button onClick="{{ a.save }}" class="btn btn-primary" style="width:68px;height:68px;padding:0;border-radius:50%;box-shadow:var(--shadow-md)" title="Bewaren"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg></button>
+<button class="btn btn-secondary" style="width:56px;height:56px;padding:0;border-radius:50%;background:var(--color-neutral-100)" title="Delen"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.59 13.51 6.83 3.98"></path><path d="m15.41 6.51-6.82 3.98"></path></svg></button>
+</div>
+<div style="flex:none;display:grid;grid-template-columns:repeat(3,1fr);padding:10px 8px 4px;background:var(--color-surface)">
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:600"><div style="width:60px;height:32px;border-radius:999px;background:var(--color-accent-200);color:var(--color-accent-800);display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg></div>Vandaag</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--color-neutral-700)"><div style="position:relative;width:60px;height:32px;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg><span style="position:absolute;top:0;right:12px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--color-accent);color:var(--color-bg);font-size:11px;font-weight:700;display:grid;place-items:center">{{ a.saved }}</span></div>Bewaard</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--color-neutral-700)"><div style="width:60px;height:32px;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg></div>Ik</div>
+</div>
+<div style="height:20px;flex:none;display:grid;place-items:center;background:var(--color-surface)"><div style="width:108px;height:4px;border-radius:2px;background:currentColor;opacity:.4"></div></div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Kleurvlak — volle kleur per tip, grote typografie</div>
+<div style="width:376px;height:796px;background:#201e1d;border-radius:44px;padding:8px;box-shadow:var(--shadow-lg)">
+<div style="position:relative;width:360px;height:780px;border-radius:36px;overflow:hidden;background:var(--color-bg);display:flex;flex-direction:column;font-family:var(--font-body);color:var(--color-text)">
+<div style="position:relative;height:32px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:13px;font-weight:600"><span>8:12</span><div style="position:absolute;left:50%;top:10px;width:11px;height:11px;margin-left:-5px;border-radius:50%;background:#201e1d"></div><div style="display:flex;gap:5px;align-items:center"><div style="width:13px;height:10px;border-radius:2px;background:currentColor;opacity:.75"></div><div style="width:20px;height:10px;border-radius:3px;border:1.5px solid currentColor"></div></div></div>
+<div style="padding:12px 22px 14px;display:flex;align-items:center;justify-content:space-between">
+<div style="font-family:var(--font-heading);font-size:21px">We can do this.</div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px 6px 10px;border-radius:999px;background:var(--color-accent-2-200);color:var(--color-accent-2-800);font-size:13px;font-weight:700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>{{ b.saved }}</div>
+</div>
+<div style="position:relative;flex:1;margin:0 14px">
+<sc-for list="{{ b.cards }}" as="c" hint-placeholder-count="3">
+<div onPointerDown="{{ c.down }}" onPointerMove="{{ c.move }}" onPointerUp="{{ c.up }}" onPointerCancel="{{ c.up }}" style="position:absolute;inset:0 0 22px;touch-action:none;user-select:none;cursor:grab;overflow:hidden;border-radius:40px;padding:28px 28px 30px;display:flex;flex-direction:column;gap:14px;background:{{ c.bg }};color:{{ c.fg }};transform-origin:50% 100%;transform:{{ c.transform }};transition:{{ c.transition }};z-index:{{ c.z }}">
+<div style="position:absolute;right:-70px;top:-70px;width:260px;height:260px;border-radius:50%;background:currentColor;opacity:.09"></div>
+<div style="position:absolute;right:40px;top:150px;width:64px;height:64px;border-radius:50%;background:currentColor;opacity:.09"></div>
+<div style="font-family:var(--font-heading);font-size:96px;line-height:.9;opacity:.4">{{ c.nn }}</div>
+<div style="flex:1"></div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">{{ c.tag }}</div>
+<div style="font-family:var(--font-heading);font-size:36px;line-height:1.04;letter-spacing:-.015em;text-wrap:pretty">{{ c.title }}</div>
+<div style="font-size:16px;line-height:1.5;text-wrap:pretty">{{ c.body }}</div>
+<div style="position:absolute;inset:0;border-radius:40px;background:var(--color-accent-2-300);display:grid;place-items:center;pointer-events:none;opacity:{{ c.likeOpSoft }}"><span style="font-family:var(--font-heading);font-size:34px;color:var(--color-accent-2-900)">Bewaard</span></div>
+<div style="position:absolute;inset:0;border-radius:40px;background:var(--color-neutral-300);display:grid;place-items:center;pointer-events:none;opacity:{{ c.nopeOpSoft }}"><span style="font-family:var(--font-heading);font-size:34px;color:var(--color-neutral-900)">Straks weer</span></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 22px 14px">
+<div style="display:flex;gap:6px;align-items:center">
+<sc-for list="{{ b.dots }}" as="d" hint-placeholder-count="7"><div style="height:8px;border-radius:999px;background:var(--color-text);width:{{ d.w }};opacity:{{ d.op }};transition:width .3s, opacity .3s"></div></sc-for>
+</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{ b.undo }}" class="btn btn-secondary btn-icon" style="width:44px;height:44px" title="Vorige"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg></button>
+<button onClick="{{ b.save }}" class="btn btn-primary" style="height:44px;padding:0 18px;font-size:15px">Bewaar</button>
+</div>
+</div>
+<div style="padding:0 22px 8px;font-size:12px;color:var(--color-neutral-700)">Veeg naar links voor later, naar rechts om te bewaren</div>
+<div style="height:20px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:currentColor;opacity:.4"></div></div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Ochtendritueel — opkomende zon, tip + kleine opdracht</div>
+<div style="width:376px;height:796px;background:#201e1d;border-radius:44px;padding:8px;box-shadow:var(--shadow-lg)">
+<div style="position:relative;width:360px;height:780px;border-radius:36px;overflow:hidden;background:var(--color-bg);display:flex;flex-direction:column;font-family:var(--font-body);color:var(--color-text)">
+<div style="position:absolute;right:-60px;top:0;width:250px;height:250px;border-radius:50%;background:var(--color-accent-300);transform:{{ c.sun }};transition:transform .8s cubic-bezier(.2,.8,.2,1)"></div>
+<div style="position:absolute;right:30px;top:0;width:80px;height:80px;border-radius:50%;background:var(--color-accent-200);transform:{{ c.sun2 }};transition:transform 1s cubic-bezier(.2,.8,.2,1)"></div>
+<div style="position:relative;height:32px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:13px;font-weight:600"><span>8:12</span><div style="position:absolute;left:50%;top:10px;width:11px;height:11px;margin-left:-5px;border-radius:50%;background:#201e1d"></div><div style="display:flex;gap:5px;align-items:center"><div style="width:13px;height:10px;border-radius:2px;background:currentColor;opacity:.75"></div><div style="width:20px;height:10px;border-radius:3px;border:1.5px solid currentColor"></div></div></div>
+<div style="position:relative;padding:22px 26px 0">
+<div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-800)">Zaterdag 3 oktober</div>
+<div style="font-family:var(--font-heading);font-size:32px;line-height:1.08;margin-top:6px">Goedemorgen,<br>Sam</div>
+<div style="display:flex;align-items:center;gap:10px;margin-top:18px">
+<div style="flex:1;display:flex;gap:4px">
+<sc-for list="{{ c.segs }}" as="s" hint-placeholder-count="7"><div style="flex:1;height:6px;border-radius:999px;background:var(--color-accent-700);opacity:{{ s.op }};transition:opacity .3s"></div></sc-for>
+</div>
+<span style="font-size:12px;font-weight:700;color:var(--color-accent-800)">{{ c.pos }} van {{ c.total }}</span>
+</div>
+</div>
+<div style="position:relative;flex:1;margin:22px 26px 0">
+<sc-for list="{{ c.cards }}" as="k" hint-placeholder-count="3">
+<div onPointerDown="{{ k.down }}" onPointerMove="{{ k.move }}" onPointerUp="{{ k.up }}" onPointerCancel="{{ k.up }}" style="position:absolute;inset:0 0 14px;touch-action:none;user-select:none;cursor:grab;background:var(--color-neutral-100);border-radius:36px;box-shadow:var(--shadow-md);padding:24px;display:flex;flex-direction:column;gap:12px;transform-origin:50% 120%;transform:{{ k.transform }};transition:{{ k.transition }};z-index:{{ k.z }}">
+<span class="tag tag-accent-2" style="align-self:flex-start">{{ k.tag }}</span>
+<div style="font-family:var(--font-heading);font-size:26px;line-height:1.12;text-wrap:pretty;margin-top:4px">{{ k.title }}</div>
+<div style="font-size:15px;line-height:1.5;color:var(--color-neutral-800);text-wrap:pretty">{{ k.body }}</div>
+<div style="flex:1"></div>
+<div onPointerDown="{{ k.stop }}" onClick="{{ k.toggle }}" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:24px;background:var(--color-accent-2-100);color:var(--color-accent-2-800);cursor:pointer">
+<sc-if value="{{ k.done }}" hint-placeholder-val="{{ false }}"><div style="flex:none;width:26px;height:26px;border-radius:50%;background:var(--color-accent-2-600);color:var(--color-neutral-100);display:grid;place-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div></sc-if>
+<sc-if value="{{ k.notDone }}" hint-placeholder-val="{{ true }}"><div style="flex:none;width:26px;height:26px;border-radius:50%;border:2.5px solid var(--color-accent-2-500)"></div></sc-if>
+<div><div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase">Probeer vandaag</div><div style="font-size:14px;line-height:1.4;margin-top:2px">{{ k.try }}</div></div>
+</div>
+<div style="position:absolute;inset:0;border-radius:36px;border:3px solid var(--color-accent-2-500);pointer-events:none;opacity:{{ k.likeOp }}"></div>
+<div style="position:absolute;inset:0;border-radius:36px;border:3px solid var(--color-neutral-500);pointer-events:none;opacity:{{ k.nopeOp }}"></div>
+</div>
+</sc-for>
+</div>
+<div style="position:relative;display:flex;gap:10px;padding:12px 26px 16px">
+<button onClick="{{ c.skip }}" class="btn btn-secondary" style="flex:1;height:52px;font-size:16px;background:var(--color-neutral-100)">Later</button>
+<button onClick="{{ c.save }}" class="btn btn-primary" style="flex:1.4;height:52px;font-size:16px;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>Bewaar</button>
+</div>
+<div style="height:20px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:currentColor;opacity:.4"></div></div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Probeer: "werk <a class="dv-oid" href="#1c">1c</a> uit met onboarding" · "<a class="dv-oid" href="#1a">1a</a> maar met de kleuren van <a class="dv-oid" href="#1b">1b</a>" · "meer richtingen"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TIPS = [
+  { tag: 'Groei', title: 'Je hoeft het niet in één keer goed te doen.', body: 'Vooruitgang is ook: vandaag een klein beetje verder dan gisteren. Kleine stappen tellen echt.', try: 'Schrijf één ding op dat je vandaag beter deed dan gisteren.' },
+  { tag: 'Zelfcompassie', title: 'Praat tegen jezelf zoals tegen een goede vriend.', body: 'Je zou een vriend niet afkraken om een foutje. Gun jezelf diezelfde mildheid.', try: 'Vervang één strenge gedachte door een vriendelijke zin.' },
+  { tag: 'Mindfulness', title: 'Gedachten zijn geen feiten.', body: 'Merk een gedachte op en geef hem een naam — "ah, daar is de twijfel" — en laat hem weer voorbijdrijven.', try: 'Noem vandaag drie keer een gedachte bij naam.' },
+  { tag: 'Groei', title: '"Nog niet" is ook een antwoord.', body: 'Zeg niet "ik kan dit niet", maar "ik kan dit nog niet". Dat ene woordje zet een deur open.', try: 'Voeg "nog" toe aan één zin waarin je jezelf tegenhoudt.' },
+  { tag: 'Rust', title: 'Rust is geen beloning. Het is brandstof.', body: 'Je hoeft een pauze niet te verdienen. Even stilstaan is óók vooruitgaan.', try: 'Neem vijf minuten zonder scherm, gewoon voor jezelf.' },
+  { tag: 'Focus', title: 'Kies één ding dat vandaag telt.', body: 'Niet tien. Eén. Lukt dat, dan is je dag geslaagd — de rest is bonus.', try: 'Schrijf je ene ding op een briefje en leg het in zicht.' },
+  { tag: 'Gevoel', title: 'Ook het lastige gevoel mag er zijn.', body: 'Wegduwen maakt het groter. Ruimte geven maakt het zachter.', try: 'Adem drie keer diep in en zeg: "dit mag er even zijn".' }
+];
+const B_COLORS = [
+  { bg: '#8c491a', fg: '#f9f4ed' },
+  { bg: '#ccdbb2', fg: '#272e1b' },
+  { bg: '#2e2b25', fg: '#f5ead8' },
+  { bg: '#ffc6a5', fg: '#402310' },
+  { bg: '#56633f', fg: '#f0fae1' },
+  { bg: '#dcd3c4', fg: '#2e2b25' },
+  { bg: '#643312', fg: '#ffe1d0' }
+];
+const N = TIPS.length;
+const mod = (n) => ((n % N) + N) % N;
+
+class Component extends DCLogic {
+  state = { d: { a: this.fresh(), b: this.fresh(), c: this.fresh() }, saved: { a: 0, b: 0, c: 0 }, done: {} };
+  drag = {};
+  busy = {};
+  fresh() { return { i: 0, dx: 0, drag: false, snap: false }; }
+  upd(k, p) { this.setState(s => ({ d: { ...s.d, [k]: { ...s.d[k], ...p } } })); }
+  down(k, e) {
+    if (this.busy[k]) return;
+    this.drag[k] = { x: e.clientX };
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
+    this.upd(k, { drag: true, dx: 0 });
+  }
+  move(k, e) { const d = this.drag[k]; if (d) this.upd(k, { dx: e.clientX - d.x }); }
+  up(k) {
+    if (!this.drag[k]) return;
+    this.drag[k] = null;
+    const dx = this.state.d[k].dx;
+    if (Math.abs(dx) > 90) this.fly(k, dx > 0 ? 1 : -1);
+    else this.upd(k, { drag: false, dx: 0 });
+  }
+  fly(k, dir) {
+    if (this.busy[k]) return;
+    this.busy[k] = true;
+    this.upd(k, { drag: false, dx: dir * 480 });
+    if (dir > 0) this.setState(s => ({ saved: { ...s.saved, [k]: s.saved[k] + 1 } }));
+    setTimeout(() => {
+      this.setState(s => ({ d: { ...s.d, [k]: { i: s.d[k].i + 1, dx: 0, drag: false, snap: true } } }));
+      requestAnimationFrame(() => requestAnimationFrame(() => { this.upd(k, { snap: false }); this.busy[k] = false; }));
+    }, 300);
+  }
+  undo(k) {
+    const st = this.state.d[k];
+    if (this.busy[k] || st.i === 0) return;
+    this.busy[k] = true;
+    this.setState(s => ({ d: { ...s.d, [k]: { i: st.i - 1, dx: -480, drag: false, snap: true } } }));
+    requestAnimationFrame(() => requestAnimationFrame(() => { this.upd(k, { snap: false, dx: 0 }); setTimeout(() => { this.busy[k] = false; }, 320); }));
+  }
+  stack(k, fan) {
+    const st = this.state.d[k];
+    const p = Math.min(Math.abs(st.dx) / 140, 1);
+    const transition = st.drag || st.snap ? 'none' : 'transform .32s cubic-bezier(.2,.8,.2,1)';
+    return [2, 1, 0].map(depth => {
+      const idx = mod(st.i + depth);
+      const t = TIPS[idx];
+      let transform;
+      if (depth === 0) transform = `translateX(${st.dx}px) rotate(${st.dx / 18}deg)`;
+      else {
+        const e = depth - (depth === 1 ? p : p * 0.5) * 1;
+        transform = fan
+          ? `translateX(${e * 8}px) rotate(${e * 3}deg)`
+          : `translateY(${e * 12}px) scale(${1 - e * 0.05})`;
+      }
+      const top = depth === 0;
+      const like = top ? Math.max(0, Math.min(st.dx / 90, 1)) : 0;
+      const nope = top ? Math.max(0, Math.min(-st.dx / 90, 1)) : 0;
+      return {
+        ...t, n: idx + 1, nn: String(idx + 1).padStart(2, '0'), total: N,
+        bg: B_COLORS[idx].bg, fg: B_COLORS[idx].fg,
+        transform, transition, z: 3 - depth,
+        likeOp: like, nopeOp: nope, likeOpSoft: like * 0.85, nopeOpSoft: nope * 0.85,
+        done: !!this.state.done[idx], notDone: !this.state.done[idx],
+        toggle: top ? () => this.setState(s => ({ done: { ...s.done, [idx]: !s.done[idx] } })) : undefined,
+        stop: (e) => e.stopPropagation(),
+        down: top ? (e) => this.down(k, e) : undefined,
+        move: top ? (e) => this.move(k, e) : undefined,
+        up: top ? () => this.up(k) : undefined
+      };
+    });
+  }
+  deck(k, fan) {
+    const st = this.state.d[k];
+    const pos = mod(st.i);
+    return {
+      cards: this.stack(k, fan), saved: this.state.saved[k],
+      pos: pos + 1, total: N,
+      skip: () => this.fly(k, -1), save: () => this.fly(k, 1), undo: () => this.undo(k),
+      dots: TIPS.map((_, j) => ({ w: j === pos ? '22px' : '8px', op: j === pos ? 1 : 0.22 })),
+      segs: TIPS.map((_, j) => ({ op: j <= pos ? 1 : 0.18 })),
+      sun: `translateY(${150 - (pos / (N - 1)) * 210}px)`,
+      sun2: `translateY(${230 - (pos / (N - 1)) * 200}px)`
+    };
+  }
+  renderVals() {
+    return { a: this.deck('a', false), b: this.deck('b', false), c: this.deck('c', true) };
+  }
+}
+</script>
+</body>
+</html>
