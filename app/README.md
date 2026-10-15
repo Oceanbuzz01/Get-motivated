@@ -27,6 +27,6 @@ npm run build    # static output in dist/
 
 ## Online zetten en installeren
 
-`.github/workflows/deploy-pages.yml` bouwt de app bij elke push naar `main` en zet hem op GitHub Pages: https://oceanbuzz01.github.io/get-motivated/. Eenmalig nodig: in de repository onder *Settings → Pages* bij *Source* kiezen voor *GitHub Actions*.
+`.github/workflows/deploy-pages.yml` bouwt de app bij elke push naar `main` en zet hem op GitHub Pages: https://oceanbuzz01.github.io/Get-motivated/. Eenmalig nodig: in de repository onder *Settings → Pages* bij *Source* kiezen voor *GitHub Actions*.
 
 Op Android: open het adres in Chrome en kies ⋮ → *App installeren*. Een service worker (`public/sw.js`) zorgt dat de app ook offline opent. Verhoog `CACHE` in dat bestand als je wilt dat oude gecachte bestanden direct worden opgeruimd.
