@@ -1,12 +1,11 @@
+import { useState } from 'react';
 import StylePicker from '../components/StylePicker.jsx';
 import { PageHead } from './Saved.jsx';
 
 /** Profile: name, home-screen style, reset. */
 export default function Me({ store, onBack }) {
   const done = Object.values(store.done.ids).filter(Boolean).length;
-  const reset = () => {
-    if (window.confirm('Alles wissen en opnieuw beginnen?')) store.reset();
-  };
+  const [confirming, setConfirming] = useState(false);
   return (
     <>
       <PageHead title="Ik" onBack={onBack} />
@@ -23,9 +22,19 @@ export default function Me({ store, onBack }) {
         <div style={{ fontSize: 14, color: 'var(--color-neutral-700)' }}>
           {store.saved.length} {store.saved.length === 1 ? 'tip' : 'tips'} bewaard · {done} {done === 1 ? 'opdracht' : 'opdrachten'} gedaan vandaag
         </div>
-        <button className="btn btn-secondary" style={{ alignSelf: 'flex-start', height: 44, padding: '0 18px' }} onClick={reset}>
-          Opnieuw beginnen
-        </button>
+        {confirming ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ fontSize: 14 }}>Je naam, bewaarde tips en vinkjes worden gewist.</div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-primary" style={{ height: 44, padding: '0 18px' }} onClick={store.reset}>Alles wissen</button>
+              <button className="btn btn-secondary" style={{ height: 44, padding: '0 18px' }} onClick={() => setConfirming(false)}>Annuleren</button>
+            </div>
+          </div>
+        ) : (
+          <button className="btn btn-secondary" style={{ alignSelf: 'flex-start', height: 44, padding: '0 18px' }} onClick={() => setConfirming(true)}>
+            Opnieuw beginnen
+          </button>
+        )}
       </div>
     </>
   );

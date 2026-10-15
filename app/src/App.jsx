@@ -44,10 +44,16 @@ export default function App() {
   const share = useCallback(async (tip) => {
     const text = `${tip.title} ${tip.body}\n\nWe can do this.`;
     try {
-      if (navigator.share) await navigator.share({ title: tip.title, text });
-      else { await navigator.clipboard.writeText(text); flash('Tip gekopieerd'); }
+      if (navigator.share) { await navigator.share({ title: tip.title, text }); return; }
     } catch (e) {
-      if (e?.name !== 'AbortError') flash('Delen lukte niet');
+      if (e?.name === 'AbortError') return;
+      // Share sheet refused (e.g. in an embedded frame): fall back to copying.
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      flash('Tip gekopieerd');
+    } catch (_) {
+      flash('Delen lukte niet');
     }
   }, [flash]);
 
