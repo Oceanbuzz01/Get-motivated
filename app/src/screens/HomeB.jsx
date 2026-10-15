@@ -1,6 +1,6 @@
 import Icon from '../components/Icon.jsx';
-import { useDeck, useDeckKeys } from '../useDeck.js';
-import { B_COLORS, TIPS, dayOffset } from '../tips.js';
+import { useTodayDeck } from '../useDeck.js';
+import { B_COLORS, DAILY, TIPS } from '../tips.js';
 
 const overlay = {
   position: 'absolute', inset: 0, borderRadius: 40, display: 'grid', placeItems: 'center', pointerEvents: 'none'
@@ -8,8 +8,7 @@ const overlay = {
 
 /** 1b Kleurvlak: a full colour per tip, big numerals, dot pager. */
 export default function HomeB({ store, go }) {
-  const deck = useDeck({ start: dayOffset(), onSave: store.save });
-  useDeckKeys(deck);
+  const { ids, deck } = useTodayDeck(store);
 
   return (
     <>
@@ -29,8 +28,8 @@ export default function HomeB({ store, go }) {
 
       <div className="stack" style={{ margin: '0 14px' }}>
         {deck.cards().map((c) => {
-          const t = TIPS[c.idx];
-          const col = B_COLORS[c.idx];
+          const t = TIPS[ids[c.pos]];
+          const col = B_COLORS[c.pos];
           return (
             <div key={c.depth} {...c.handlers} className="swipe-card" aria-hidden={!c.top}
               style={{
@@ -39,7 +38,7 @@ export default function HomeB({ store, go }) {
               }}>
               <div style={{ position: 'absolute', right: -70, top: -70, width: 260, height: 260, borderRadius: '50%', background: 'currentColor', opacity: 0.09 }} />
               <div style={{ position: 'absolute', right: 40, top: 150, width: 64, height: 64, borderRadius: '50%', background: 'currentColor', opacity: 0.09 }} />
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: 96, lineHeight: 0.9, opacity: 0.4 }}>{String(c.idx + 1).padStart(2, '0')}</div>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: 96, lineHeight: 0.9, opacity: 0.4 }}>{String(c.pos + 1).padStart(2, '0')}</div>
               <div className="flex-spacer" />
               <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase' }}>{t.tag}</div>
               <div style={{ fontFamily: 'var(--font-heading)', fontSize: 36, lineHeight: 1.04, letterSpacing: '-.015em', textWrap: 'pretty' }}>{t.title}</div>
@@ -56,8 +55,8 @@ export default function HomeB({ store, go }) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 22px 14px' }}>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }} aria-label={`Tip ${deck.pos + 1} van ${TIPS.length}`}>
-          {TIPS.map((_, j) => (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }} aria-label={`Tip ${deck.pos + 1} van ${DAILY}`}>
+          {ids.map((_, j) => (
             <div key={j} style={{
               height: 8, borderRadius: 999, background: 'var(--color-text)', transition: 'width .3s, opacity .3s',
               width: j === deck.pos ? 22 : 8, opacity: j === deck.pos ? 1 : 0.22

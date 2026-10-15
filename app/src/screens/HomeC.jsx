@@ -1,6 +1,6 @@
 import Icon from '../components/Icon.jsx';
-import { useDeck, useDeckKeys } from '../useDeck.js';
-import { N, TIPS, dayOffset, greeting, todayLabel } from '../tips.js';
+import { useTodayDeck } from '../useDeck.js';
+import { DAILY, TIPS, greeting, todayLabel } from '../tips.js';
 
 const ring = { position: 'absolute', inset: 0, borderRadius: 36, pointerEvents: 'none' };
 
@@ -22,15 +22,13 @@ export function Sun({ progress }) {
 
 /** 1c Ochtendritueel: rising sun, progress, tip plus a small task for today. */
 export default function HomeC({ store, go }) {
-  const deck = useDeck({ start: dayOffset(), onSave: store.save });
-  useDeckKeys(deck);
-  // Progress through today's set, counted from the tip the day started on.
-  const step = (deck.pos - dayOffset() + N) % N;
+  const { ids, deck } = useTodayDeck(store);
+  const step = deck.pos;
 
   return (
     <>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-        <Sun progress={step / (N - 1)} />
+        <Sun progress={step / (DAILY - 1)} />
       </div>
       <div style={{ position: 'relative', padding: '22px 26px 0' }}>
         {/* The design has no route to Bewaard / Ik here; two small buttons share the date row. */}
@@ -50,18 +48,19 @@ export default function HomeC({ store, go }) {
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 18 }}>
           <div style={{ flex: 1, display: 'flex', gap: 4 }}>
-            {TIPS.map((_, j) => (
+            {ids.map((_, j) => (
               <div key={j} style={{ flex: 1, height: 6, borderRadius: 999, background: 'var(--color-accent-700)', opacity: j <= step ? 1 : 0.18, transition: 'opacity .3s' }} />
             ))}
           </div>
-          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-accent-800)' }}>{step + 1} van {N}</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-accent-800)' }}>{step + 1} van {DAILY}</span>
         </div>
       </div>
 
       <div className="stack" style={{ margin: '22px 26px 0' }}>
         {deck.cards(true).map((c) => {
-          const t = TIPS[c.idx];
-          const done = !!store.done.ids[c.idx];
+          const id = ids[c.pos];
+          const t = TIPS[id];
+          const done = !!store.done.ids[id];
           return (
             <div key={c.depth} {...c.handlers} className="swipe-card" aria-hidden={!c.top}
               style={{
@@ -74,7 +73,7 @@ export default function HomeC({ store, go }) {
               <div className="flex-spacer" />
               <button
                 onPointerDown={(e) => e.stopPropagation()}
-                onClick={c.top ? () => store.toggleDone(c.idx) : undefined}
+                onClick={c.top ? () => store.toggleDone(id) : undefined}
                 role="checkbox" aria-checked={done} tabIndex={c.top ? 0 : -1}
                 style={{
                   display: 'flex', gap: 12, alignItems: 'flex-start', padding: '14px 16px', borderRadius: 24, border: 0, textAlign: 'left',

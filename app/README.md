@@ -20,6 +20,6 @@ npm run build    # static output in dist/
 
 ## Notes
 
-- Each day the deck starts at a different tip. "Probeer vandaag" ticks reset daily. Saved tips, name and style live in `localStorage`.
+- The pool has 70 tips (`src/tips.js`); each day deals 7 new ones, so you get new tips for 10 days before a new round starts in a different order. A tip never returns within 6 days. Add tips at the end of the list only, because a tip's position is its id. "Probeer vandaag" ticks reset daily. Saved tips, name and style live in `localStorage`.
 - On screens at least 520×820 the app is drawn inside the 360×780 handset frame from the design. On a phone it fills the screen and uses the device's own status bar and safe-area insets instead of the drawn ones.
 - Fonts are bundled through `@fontsource`, so they also work offline.

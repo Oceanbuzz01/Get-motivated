@@ -1,11 +1,10 @@
 import Icon from '../components/Icon.jsx';
-import { useDeck, useDeckKeys } from '../useDeck.js';
-import { N, TIPS, dayOffset, todayLabel } from '../tips.js';
+import { useTodayDeck } from '../useDeck.js';
+import { DAILY, TIPS, todayLabel } from '../tips.js';
 
 /** 1a Zachte kaart: classic stack, round actions, Material bottom navigation. */
 export default function HomeA({ store, onShare }) {
-  const deck = useDeck({ start: dayOffset(), onSave: store.save });
-  useDeckKeys(deck);
+  const { ids, deck } = useTodayDeck(store);
 
   return (
     <>
@@ -21,7 +20,7 @@ export default function HomeA({ store, onShare }) {
 
       <div className="stack" style={{ margin: '10px 22px 0' }}>
         {deck.cards().map((c) => {
-          const t = TIPS[c.idx];
+          const t = TIPS[ids[c.pos]];
           return (
             <div key={c.depth} {...c.handlers} className="swipe-card" aria-hidden={!c.top}
               style={{
@@ -30,7 +29,7 @@ export default function HomeA({ store, onShare }) {
               }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span className="tag tag-accent">{t.tag}</span>
-                <span style={{ fontSize: 12, color: 'var(--color-neutral-700)' }}>{c.idx + 1} / {N}</span>
+                <span style={{ fontSize: 12, color: 'var(--color-neutral-700)' }}>{c.pos + 1} / {DAILY}</span>
               </div>
               <div className="flex-spacer" />
               <div style={{ fontFamily: 'var(--font-heading)', fontSize: 30, lineHeight: 1.1, letterSpacing: '-.01em', textWrap: 'pretty' }}>{t.title}</div>
@@ -57,7 +56,7 @@ export default function HomeA({ store, onShare }) {
         <button onClick={deck.save} className="btn btn-primary btn-round" style={{ width: 68, height: 68, boxShadow: 'var(--shadow-md)' }} title="Bewaren" aria-label="Bewaren">
           <Icon name="heart" size={28} />
         </button>
-        <button onClick={() => onShare(TIPS[deck.pos])} className="btn btn-secondary btn-round btn-soft" style={{ width: 56, height: 56 }} title="Delen" aria-label="Delen">
+        <button onClick={() => onShare(TIPS[ids[deck.pos]])} className="btn btn-secondary btn-round btn-soft" style={{ width: 56, height: 56 }} title="Delen" aria-label="Delen">
           <Icon name="share" size={22} />
         </button>
       </div>

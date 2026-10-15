@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from './components/Icon.jsx';
 import { useStore } from './store.js';
+import { dayNumber } from './tips.js';
 import HomeA from './screens/HomeA.jsx';
 import HomeB from './screens/HomeB.jsx';
 import HomeC from './screens/HomeC.jsx';
@@ -31,6 +32,14 @@ export default function App() {
   const [screen, setScreen] = useState('home');
   const [toast, setToast] = useState(null);
   const toastTimer = useRef();
+  const [day, setDay] = useState(dayNumber);
+
+  // When the app comes back into view on a new day, deal the new day's tips.
+  useEffect(() => {
+    const check = () => { if (document.visibilityState === 'visible') setDay(dayNumber()); };
+    document.addEventListener('visibilitychange', check);
+    return () => document.removeEventListener('visibilitychange', check);
+  }, []);
 
   // A reset sends you back through onboarding from the start.
   useEffect(() => { if (!store.onboarded) setScreen('home'); }, [store.onboarded]);
@@ -65,7 +74,7 @@ export default function App() {
   if (!store.onboarded) content = <Onboarding store={store} />;
   else if (screen === 'saved') content = <Saved store={store} onBack={back} onShare={share} />;
   else if (screen === 'me') content = <Me store={store} onBack={back} />;
-  else content = <Home key={store.style} store={store} go={setScreen} onShare={share} />;
+  else content = <Home key={`${store.style}-${day}`} store={store} go={setScreen} onShare={share} />;
 
   return (
     <div className="device">

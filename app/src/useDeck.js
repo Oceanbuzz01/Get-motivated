@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { mod } from './tips.js';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DAILY, todaysTips } from './tips.js';
 
 const THRESHOLD = 90;
 const FLY_DISTANCE = 480;
@@ -8,11 +8,11 @@ const EASE = 'transform .32s cubic-bezier(.2,.8,.2,1)';
 const raf2 = (fn) => requestAnimationFrame(() => requestAnimationFrame(fn));
 
 /**
- * Swipeable card stack: drag the top card right to save, left for later.
- * `start` is the tip index the deck opens on; `onSave(idx)` fires when a card
- * flies right.
+ * Swipeable card stack over `count` cards that loops: drag the top card right
+ * to save, left for later. `onSave(pos)` fires when the card at `pos` flies right.
  */
-export function useDeck({ start = 0, onSave }) {
+export function useDeck({ count, onSave }) {
+  const mod = (n) => ((n % count) + count) % count;
   const [st, setSt] = useState({ i: 0, dx: 0, drag: false, snap: false });
   const drag = useRef(null);
   const busy = useRef(false);
@@ -27,12 +27,12 @@ export function useDeck({ start = 0, onSave }) {
     if (busy.current) return;
     busy.current = true;
     upd({ drag: false, dx: dir * FLY_DISTANCE });
-    if (dir > 0) onSave?.(mod(start + stRef.current.i));
+    if (dir > 0) onSave?.(mod(stRef.current.i));
     timers.current.push(setTimeout(() => {
       setSt((s) => ({ i: s.i + 1, dx: 0, drag: false, snap: true }));
       raf2(() => { upd({ snap: false }); busy.current = false; });
     }, 300));
-  }, [start, onSave]);
+  }, [count, onSave]);
 
   const undo = useCallback(() => {
     if (busy.current || stRef.current.i === 0) return;
@@ -84,7 +84,7 @@ export function useDeck({ start = 0, onSave }) {
       const like = top ? Math.max(0, Math.min(st.dx / THRESHOLD, 1)) : 0;
       const nope = top ? Math.max(0, Math.min(-st.dx / THRESHOLD, 1)) : 0;
       return {
-        depth, top, idx: mod(start + st.i + depth),
+        depth, top, pos: mod(st.i + depth),
         style: { transform, transition, zIndex: 3 - depth },
         like, nope,
         handlers: top ? handlers : {}
@@ -92,7 +92,16 @@ export function useDeck({ start = 0, onSave }) {
     });
   }
 
-  return { pos: mod(start + st.i), cards, save: () => fly(1), skip: () => fly(-1), undo };
+  return { pos: mod(st.i), cards, save: () => fly(1), skip: () => fly(-1), undo };
+}
+
+/** Today's deck: `ids` are the tip ids for today, saving stores the tip's id. */
+export function useTodayDeck(store) {
+  const ids = useMemo(() => todaysTips(), []);
+  const onSave = useCallback((pos) => store.save(ids[pos]), [ids, store.save]);
+  const deck = useDeck({ count: DAILY, onSave });
+  useDeckKeys(deck);
+  return { ids, deck };
 }
 
 /** Arrow keys: right saves, left skips, Backspace goes back. */
