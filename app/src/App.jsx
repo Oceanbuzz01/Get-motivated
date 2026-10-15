@@ -78,7 +78,7 @@ export default function App() {
 
   return (
     <div className="device">
-      <main className="screen">
+      <main className={store.onboarded && screen !== 'home' ? 'screen page' : 'screen'}>
         <div className="inset-top" />
         {content}
         {store.onboarded && tabs && <BottomNav screen={screen} go={setScreen} saved={store.saved.length} />}
