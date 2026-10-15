@@ -1,0 +1,115 @@
+/* App shell. Component and token styles come from organic.css (the Organic
+   design system, copied unchanged from the design handoff). */
+
+html, body, #root { height: 100%; }
+body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+
+/* On a phone the app fills the screen and the OS draws the status bar and
+   gesture bar; the insets keep content clear of them. */
+:root {
+  --inset-top: env(safe-area-inset-top, 0px);
+  --inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.device { height: 100%; background: var(--color-bg); }
+.screen {
+  position: relative; height: 100%; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: var(--color-bg); color: var(--color-text); font-family: var(--font-body);
+}
+.inset-top { flex: none; height: var(--inset-top); }
+.inset-bottom { flex: none; height: var(--inset-bottom); }
+
+/* On a wide screen, show the app in the 360×780 handset frame from the design. */
+@media (min-width: 520px) and (min-height: 820px) {
+  :root { --inset-top: 32px; --inset-bottom: 20px; }
+  body { background: #e9dcc6; }
+  #root { display: grid; place-items: center; padding: 24px; }
+  .device {
+    width: 376px; height: 796px; padding: 8px; flex: none;
+    background: #201e1d; border-radius: 44px; box-shadow: var(--shadow-lg);
+  }
+  .screen { width: 360px; height: 780px; border-radius: 36px; }
+  .inset-bottom { display: grid; place-items: center; }
+  .inset-bottom::after {
+    content: ''; width: 108px; height: 4px; border-radius: 2px; background: currentColor; opacity: .4;
+  }
+}
+
+/* — card stack — */
+.stack { position: relative; flex: 1; }
+.swipe-card {
+  position: absolute; touch-action: none; user-select: none; cursor: grab;
+  display: flex; flex-direction: column;
+}
+.swipe-card:active { cursor: grabbing; }
+.flex-spacer { flex: 1; }
+.kicker { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+
+/* Round action buttons (1a) */
+.btn-round { padding: 0; border-radius: 50%; }
+.btn-soft { background: var(--color-neutral-100); }
+.btn-soft:hover { background: var(--color-neutral-200); }
+
+/* — bottom navigation (1a) — */
+.bottom-nav {
+  flex: none; display: grid; grid-template-columns: repeat(3, 1fr);
+  padding: 10px 8px 4px; background: var(--color-surface);
+}
+.bottom-nav + .inset-bottom { background: var(--color-surface); }
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--color-neutral-700); background: none; border: 0; cursor: pointer; padding: 0;
+}
+.nav-item .pill { position: relative; width: 60px; height: 32px; border-radius: 999px; display: grid; place-items: center; }
+.nav-item:hover .pill { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.nav-item[aria-current='page'] { font-weight: 600; color: var(--color-text); }
+.nav-item[aria-current='page'] .pill { background: var(--color-accent-200); color: var(--color-accent-800); }
+.badge {
+  position: absolute; top: 0; right: 12px; min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 999px; background: var(--color-accent); color: var(--color-bg);
+  font-size: 11px; font-weight: 700; display: grid; place-items: center;
+}
+
+/* — scrolling list pages (Bewaard, Ik) — */
+.page-head { display: flex; align-items: center; gap: 12px; padding: 14px 24px 10px; }
+.page-title { font-family: var(--font-heading); font-size: 28px; line-height: 1.1; }
+.page-body { flex: 1; overflow-y: auto; padding: 10px 22px 22px; display: flex; flex-direction: column; gap: 14px; }
+.saved-card {
+  background: var(--color-neutral-100); border-radius: 28px; box-shadow: var(--shadow-sm);
+  padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 10px;
+}
+.saved-title { font-family: var(--font-heading); font-size: 21px; line-height: 1.15; text-wrap: pretty; }
+.saved-body { font-size: 14px; line-height: 1.5; color: var(--color-neutral-800); text-wrap: pretty; }
+.empty {
+  margin: auto 0; padding: 32px 8px; text-align: left; color: var(--color-neutral-700);
+  font-size: 15px; line-height: 1.5;
+}
+.empty strong { display: block; font-family: var(--font-heading); font-weight: 400; font-size: 24px; color: var(--color-text); margin-bottom: 6px; }
+
+/* — style picker (onboarding + Ik) — */
+.style-opts { display: flex; flex-direction: column; gap: 10px; }
+.style-opt {
+  display: flex; align-items: center; gap: 14px; padding: 12px 16px 12px 12px; text-align: left;
+  border-radius: 24px; border: 2px solid transparent; background: var(--color-neutral-100);
+  cursor: pointer; color: inherit;
+}
+.style-opt:hover { background: var(--color-neutral-200); }
+.style-opt[aria-checked='true'] { border-color: var(--color-accent); background: var(--color-accent-100); }
+.style-swatch { flex: none; width: 52px; height: 64px; border-radius: 16px; position: relative; overflow: hidden; }
+.style-name { font-family: var(--font-heading); font-size: 17px; line-height: 1.2; }
+.style-desc { font-size: 13px; line-height: 1.4; color: var(--color-neutral-700); margin-top: 2px; }
+
+.toast {
+  position: absolute; left: 50%; bottom: calc(var(--inset-bottom) + 96px); z-index: 20;
+  transform: translateX(-50%); padding: 10px 18px; border-radius: 999px;
+  background: var(--color-neutral-900); color: var(--color-neutral-100); font-size: 14px; font-weight: 600;
+  box-shadow: var(--shadow-md); white-space: nowrap; pointer-events: none;
+  animation: toast-in .25s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .swipe-card, .sun { transition: none !important; }
+}
