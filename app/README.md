@@ -24,3 +24,9 @@ npm run build    # static output in dist/
 - On screens at least 520×820 the app is drawn inside the 360×780 handset frame from the design. On a phone it fills the screen and uses the device's own status bar and safe-area insets instead of the drawn ones.
 - Fonts are bundled through `@fontsource`, so they also work offline.
 - The background is a rainforest photo (`src/assets/rainforest.jpg`, supplied by the owner) under a cream veil defined on `.screen` in `src/styles/app.css`.
+
+## Online zetten en installeren
+
+`.github/workflows/deploy-pages.yml` bouwt de app bij elke push naar `main` en zet hem op GitHub Pages: https://oceanbuzz01.github.io/get-motivated/. Eenmalig nodig: in de repository onder *Settings → Pages* bij *Source* kiezen voor *GitHub Actions*.
+
+Op Android: open het adres in Chrome en kies ⋮ → *App installeren*. Een service worker (`public/sw.js`) zorgt dat de app ook offline opent. Verhoog `CACHE` in dat bestand als je wilt dat oude gecachte bestanden direct worden opgeruimd.

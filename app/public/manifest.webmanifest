@@ -1,6 +1,7 @@
 {
   "name": "We can do this — elke dag motiverende tips",
   "short_name": "We can do this",
+  "description": "Elke dag zeven zachte mindset-tips.",
   "lang": "nl",
   "start_url": "./",
   "scope": "./",
@@ -9,6 +10,9 @@
   "background_color": "#f5ead8",
   "theme_color": "#f5ead8",
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }
