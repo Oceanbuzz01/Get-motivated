@@ -145,10 +145,16 @@ export const TIPS = [
   { tag: 'Dankbaarheid', title: 'Begin de dag met een dankjewel.', body: 'Wie de dag start met iets goeds, kijkt anders naar wat er komt.', try: 'Noem morgen bij het opstaan één ding waar je dankbaar voor bent.' }
 ];
 
-// Tips shown per day: one deck.
-export const DAILY = 7;
+// Tips shown per day: one deck. Until the switch day it was 7; days before
+// then keep their original 7 so the history shows what was really dealt.
+export const DAILY = 15;
+const LEGACY_DAILY = 7;
+const SWITCH_DAY = dayNumber(new Date(2026, 10, 3));
 
-// Full-colour card fills for direction 1b, one per position in the daily deck.
+// The day the app went live; history never goes back further than this.
+export const LAUNCH_DAY = dayNumber(new Date(2026, 9, 15));
+
+// Full-colour card fills for direction 1b, repeating along the daily deck.
 export const B_COLORS = [
   { bg: '#8c491a', fg: '#f9f4ed' },
   { bg: '#ccdbb2', fg: '#272e1b' },
@@ -184,31 +190,57 @@ export function dayNumber(date = new Date()) {
 }
 
 const EPOCH = dayNumber(new Date(2026, 0, 1));
-const rounds = [];
 
-// The order tips are dealt in during a round. Each round is a fresh shuffle,
-// except that the second half of the previous round stays in the second half,
-// so a tip never comes back within a few days of being shown.
-function roundOrder(round) {
+// The order tips are dealt in during a round, cached per deck size. Each round
+// is a fresh shuffle, except that tips dealt late in the previous round stay
+// late, so a tip never comes back within a few days of being shown.
+const orders = {};
+function roundOrder(round, perDay) {
+  const rounds = (orders[perDay] ??= []);
   for (let r = rounds.length; r <= round; r++) {
     const order = shuffledPool(r);
     if (r === 0) { rounds.push(order); continue; }
-    const late = new Set(rounds[r - 1].slice(Math.ceil(order.length / 2)));
+    // The 7-a-day schedule kept the second half of the whole pool late; keep it
+    // unchanged so its days still come out the same.
+    const used = perDay === LEGACY_DAILY ? order.length : Math.floor(order.length / perDay) * perDay;
+    const late = new Set(rounds[r - 1].slice(Math.ceil(used / 2), used));
     rounds.push([...order.filter((i) => !late.has(i)), ...order.filter((i) => late.has(i))]);
   }
   return rounds[round];
 }
 
-/**
- * Today's tips as ids into TIPS. The pool is dealt out DAILY tips per day
- * without repeats; when it runs out, a new round starts in a new order.
- */
-export function todaysTips(date = new Date()) {
-  const perRound = Math.floor(TIPS.length / DAILY);
-  const day = Math.max(0, dayNumber(date) - EPOCH);
+function deal(dayNum, perDay) {
+  const perRound = Math.floor(TIPS.length / perDay);
+  const day = Math.max(0, dayNum - EPOCH);
   const round = Math.floor(day / perRound);
   const slot = day - round * perRound;
-  return roundOrder(round).slice(slot * DAILY, slot * DAILY + DAILY);
+  return roundOrder(round, perDay).slice(slot * perDay, slot * perDay + perDay);
+}
+
+/**
+ * The tips dealt on a day (a day number from dayNumber()), as ids into TIPS.
+ * The pool is dealt out a deck per day without repeats; when it runs out, a
+ * new round starts in a new order. Every device gets the same tips per day.
+ */
+export function tipsForDay(dayNum) {
+  return dayNum < SWITCH_DAY ? deal(dayNum, LEGACY_DAILY) : deal(dayNum, DAILY);
+}
+
+export function todaysTips(date = new Date()) {
+  return tipsForDay(dayNumber(date));
+}
+
+export function dateOfDay(dayNum) {
+  const d = new Date(dayNum * 86400000);
+  return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+}
+
+/** "Vandaag", "Gisteren", "Eergisteren", or the weekday and date. */
+export function dayName(dayNum, today = dayNumber()) {
+  if (dayNum === today) return 'Vandaag';
+  if (dayNum === today - 1) return 'Gisteren';
+  if (dayNum === today - 2) return 'Eergisteren';
+  return todayLabel(dateOfDay(dayNum));
 }
 
 export function todayLabel(date = new Date()) {

@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
+import { LAUNCH_DAY, dayNumber } from './tips.js';
 
 const KEY = 'wecandothis:v1';
 const today = () => new Date().toISOString().slice(0, 10);
 
-const DEFAULTS = { onboarded: false, name: '', style: 'c', saved: [], done: { date: today(), ids: {} } };
+// firstDay: the day you started, where the history begins.
+const DEFAULTS = { onboarded: false, name: '', style: 'c', saved: [], firstDay: null, done: { date: today(), ids: {} } };
 
 function load() {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY));
     if (!raw) return DEFAULTS;
     const s = { ...DEFAULTS, ...raw };
+    // People who started before history existed get it from the launch day.
+    if (s.onboarded && s.firstDay == null) s.firstDay = LAUNCH_DAY;
     // "Probeer vandaag" ticks belong to one day only.
     if (s.done?.date !== today()) s.done = { date: today(), ids: {} };
     return s;

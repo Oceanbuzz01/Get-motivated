@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import StylePicker from '../components/StylePicker.jsx';
 import { Sun } from './HomeC.jsx';
+import { dayNumber } from '../tips.js';
 
 const STEPS = 3;
 
@@ -12,7 +13,7 @@ export default function Onboarding({ store }) {
 
   const next = () => {
     if (step < STEPS - 1) setStep(step + 1);
-    else store.set({ name: name.trim(), style, onboarded: true });
+    else store.set({ name: name.trim(), style, onboarded: true, firstDay: dayNumber() });
   };
 
   return (

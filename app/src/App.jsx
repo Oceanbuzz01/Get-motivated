@@ -6,6 +6,7 @@ import HomeA from './screens/HomeA.jsx';
 import HomeB from './screens/HomeB.jsx';
 import HomeC from './screens/HomeC.jsx';
 import Saved from './screens/Saved.jsx';
+import History, { Day } from './screens/History.jsx';
 import Me from './screens/Me.jsx';
 import Onboarding from './screens/Onboarding.jsx';
 
@@ -13,7 +14,7 @@ const HOMES = { a: HomeA, b: HomeB, c: HomeC };
 
 function BottomNav({ screen, go, saved }) {
   const item = (id, icon, label, badge) => (
-    <button className="nav-item" aria-current={screen === id ? 'page' : undefined} onClick={() => go(id)}>
+    <button className="nav-item" aria-current={screen === id || (id === 'history' && screen === 'day') ? 'page' : undefined} onClick={() => go(id)}>
       <div className="pill"><Icon name={icon} />{badge}</div>
       {label}
     </button>
@@ -21,6 +22,7 @@ function BottomNav({ screen, go, saved }) {
   return (
     <nav className="bottom-nav">
       {item('home', 'sun', 'Vandaag')}
+      {item('history', 'history', 'Geschiedenis')}
       {item('saved', 'bookmark', 'Bewaard', <span className="badge">{saved}</span>)}
       {item('me', 'user', 'Ik')}
     </nav>
@@ -33,6 +35,7 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const toastTimer = useRef();
   const [day, setDay] = useState(dayNumber);
+  const [openDay, setOpenDay] = useState(null);
 
   // When the app comes back into view on a new day, deal the new day's tips.
   useEffect(() => {
@@ -74,6 +77,8 @@ export default function App() {
   if (!store.onboarded) content = <Onboarding store={store} />;
   else if (screen === 'saved') content = <Saved store={store} onBack={back} onShare={share} />;
   else if (screen === 'me') content = <Me store={store} onBack={back} />;
+  else if (screen === 'history') content = <History store={store} onBack={back} openDay={(d) => { setOpenDay(d); setScreen('day'); }} />;
+  else if (screen === 'day' && openDay != null) content = <Day store={store} day={openDay} onBack={() => setScreen('history')} onShare={share} />;
   else content = <Home key={`${store.style}-${day}`} store={store} go={setScreen} onShare={share} />;
 
   return (

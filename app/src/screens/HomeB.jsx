@@ -17,6 +17,11 @@ export default function HomeB({ store, go }) {
           style={{ fontFamily: 'var(--font-heading)', fontSize: 21, background: 'none', border: 0, padding: 0, color: 'inherit', cursor: 'pointer' }}>
           We can do this.
         </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button onClick={() => go('history')} className="btn btn-icon" aria-label="Geschiedenis" title="Geschiedenis"
+          style={{ background: 'var(--color-accent-2-200)', color: 'var(--color-accent-2-800)', width: 32, height: 32 }}>
+          <Icon name="history" size={16} />
+        </button>
         <button onClick={() => go('saved')} aria-label={`Bewaard: ${store.saved.length}`}
           style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px 6px 10px', borderRadius: 999, border: 0, cursor: 'pointer',
@@ -24,12 +29,13 @@ export default function HomeB({ store, go }) {
           }}>
           <Icon name="heart" size={16} />{store.saved.length}
         </button>
+        </div>
       </div>
 
       <div className="stack" style={{ margin: '0 14px' }}>
         {deck.cards().map((c) => {
           const t = TIPS[ids[c.pos]];
-          const col = B_COLORS[c.pos];
+          const col = B_COLORS[c.pos % B_COLORS.length];
           return (
             <div key={c.depth} {...c.handlers} className="swipe-card" aria-hidden={!c.top}
               style={{
@@ -55,11 +61,11 @@ export default function HomeB({ store, go }) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 22px 14px' }}>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }} aria-label={`Tip ${deck.pos + 1} van ${DAILY}`}>
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }} aria-label={`Tip ${deck.pos + 1} van ${DAILY}`}>
           {ids.map((_, j) => (
             <div key={j} style={{
-              height: 8, borderRadius: 999, background: 'var(--color-text)', transition: 'width .3s, opacity .3s',
-              width: j === deck.pos ? 22 : 8, opacity: j === deck.pos ? 1 : 0.22
+              height: 6, borderRadius: 999, background: 'var(--color-text)', transition: 'width .3s, opacity .3s',
+              width: j === deck.pos ? 18 : 6, opacity: j === deck.pos ? 1 : 0.22
             }} />
           ))}
         </div>

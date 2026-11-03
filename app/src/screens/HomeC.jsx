@@ -31,10 +31,13 @@ export default function HomeC({ store, go }) {
         <Sun progress={step / (DAILY - 1)} />
       </div>
       <div style={{ position: 'relative', padding: '22px 26px 0' }}>
-        {/* The design has no route to Bewaard / Ik here; two small buttons share the date row. */}
+        {/* The design has no route to Geschiedenis / Bewaard / Ik here; small buttons share the date row. */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, margin: '-10px 0 -10px' }}>
           <div className="kicker" style={{ color: 'var(--color-neutral-800)' }}>{todayLabel()}</div>
           <div style={{ display: 'flex', gap: 6, flex: 'none' }}>
+            <button onClick={() => go('history')} className="btn btn-secondary btn-icon" style={{ background: 'var(--color-neutral-100)' }} aria-label="Geschiedenis" title="Geschiedenis">
+              <Icon name="history" size={16} />
+            </button>
             <button onClick={() => go('saved')} className="btn btn-secondary btn-icon" style={{ background: 'var(--color-neutral-100)' }} aria-label={`Bewaard: ${store.saved.length}`} title="Bewaard">
               <Icon name="bookmark" size={16} />
             </button>
@@ -47,7 +50,7 @@ export default function HomeC({ store, go }) {
           {store.name ? <>{greeting()},<br />{store.name}</> : greeting()}
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 18 }}>
-          <div style={{ flex: 1, display: 'flex', gap: 4 }}>
+          <div style={{ flex: 1, display: 'flex', gap: 3 }}>
             {ids.map((_, j) => (
               <div key={j} style={{ flex: 1, height: 6, borderRadius: 999, background: 'var(--color-accent-700)', opacity: j <= step ? 1 : 0.18, transition: 'opacity .3s' }} />
             ))}
