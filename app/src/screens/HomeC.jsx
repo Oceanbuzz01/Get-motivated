@@ -1,6 +1,9 @@
 import Icon from '../components/Icon.jsx';
+import ThemeTag from '../components/ThemeTag.jsx';
+import { StreakPill } from '../components/Bits.jsx';
 import { useTodayDeck } from '../useDeck.js';
-import { DAILY, TIPS, greeting, todayLabel } from '../tips.js';
+import { celebrate } from '../rewards.js';
+import { TIPS, greeting, todayLabel } from '../tips.js';
 
 const ring = { position: 'absolute', inset: 0, borderRadius: 36, pointerEvents: 'none' };
 
@@ -21,19 +24,19 @@ export function Sun({ progress }) {
 }
 
 /** 1c Ochtendritueel: rising sun, progress, tip plus a small task for today. */
-export default function HomeC({ store, go }) {
-  const { ids, deck } = useTodayDeck(store);
+export default function HomeC({ store, todayIds, streakN, go }) {
+  const { ids, deck } = useTodayDeck(store, todayIds);
   const step = deck.pos;
 
   return (
     <>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-        <Sun progress={step / (DAILY - 1)} />
+        <Sun progress={ids.length > 1 ? step / (ids.length - 1) : 1} />
       </div>
       <div style={{ position: 'relative', padding: '22px 26px 0' }}>
         {/* The design has no route to Geschiedenis / Bewaard / Ik here; small buttons share the date row. */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, margin: '-10px 0 -10px' }}>
-          <div className="kicker" style={{ color: 'var(--color-neutral-800)' }}>{todayLabel()}</div>
+          <div className="kicker" style={{ color: 'var(--color-neutral-800)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{todayLabel()}</div>
           <div style={{ display: 'flex', gap: 6, flex: 'none' }}>
             <button onClick={() => go('history')} className="btn btn-secondary btn-icon" style={{ background: 'var(--color-neutral-100)' }} aria-label="Geschiedenis" title="Geschiedenis">
               <Icon name="history" size={16} />
@@ -55,7 +58,7 @@ export default function HomeC({ store, go }) {
               <div key={j} style={{ flex: 1, height: 6, borderRadius: 999, background: 'var(--color-accent-700)', opacity: j <= step ? 1 : 0.18, transition: 'opacity .3s' }} />
             ))}
           </div>
-          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-accent-800)' }}>{step + 1} van {DAILY}</span>
+          <StreakPill n={streakN} compact /><span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-accent-800)', whiteSpace: 'nowrap' }}>{step + 1} van {ids.length}</span>
         </div>
       </div>
 
@@ -67,16 +70,17 @@ export default function HomeC({ store, go }) {
           return (
             <div key={c.depth} {...c.handlers} className="swipe-card" aria-hidden={!c.top}
               style={{
-                ...c.style, inset: '0 0 14px', background: 'var(--color-neutral-100)', borderRadius: 36,
+                ...c.style, inset: '0 0 14px', overflow: 'hidden', background: 'var(--color-neutral-100)', borderRadius: 36,
                 boxShadow: 'var(--shadow-md)', padding: 24, gap: 12, transformOrigin: '50% 120%'
               }}>
-              <span className="tag tag-accent-2" style={{ alignSelf: 'flex-start' }}>{t.tag}</span>
+              <ThemeTag tag={t.tag} style={{ alignSelf: 'flex-start' }} />
+              <div className="card-text">
               <div style={{ fontFamily: 'var(--font-heading)', fontSize: 26, lineHeight: 1.12, textWrap: 'pretty', marginTop: 4 }}>{t.title}</div>
               <div style={{ fontSize: 15, lineHeight: 1.5, color: 'var(--color-neutral-800)', textWrap: 'pretty' }}>{t.body}</div>
-              <div className="flex-spacer" />
+              </div>
               <button
                 onPointerDown={(e) => e.stopPropagation()}
-                onClick={c.top ? () => store.toggleDone(id) : undefined}
+                onClick={c.top ? (e) => { if (!done) celebrate(e.currentTarget); store.toggleDone(id); } : undefined}
                 role="checkbox" aria-checked={done} tabIndex={c.top ? 0 : -1}
                 style={{
                   display: 'flex', gap: 12, alignItems: 'flex-start', padding: '14px 16px', borderRadius: 24, border: 0, textAlign: 'left',

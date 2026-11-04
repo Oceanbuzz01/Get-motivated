@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DAILY, todaysTips } from './tips.js';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const THRESHOLD = 90;
 const FLY_DISTANCE = 480;
@@ -95,11 +94,10 @@ export function useDeck({ count, onSave }) {
   return { pos: mod(st.i), cards, save: () => fly(1), skip: () => fly(-1), undo };
 }
 
-/** Today's deck: `ids` are the tip ids for today, saving stores the tip's id. */
-export function useTodayDeck(store) {
-  const ids = useMemo(() => todaysTips(), []);
+/** Today's deck over `ids` (today's tip ids); saving stores the tip's id. */
+export function useTodayDeck(store, ids) {
   const onSave = useCallback((pos) => store.save(ids[pos]), [ids, store.save]);
-  const deck = useDeck({ count: DAILY, onSave });
+  const deck = useDeck({ count: ids.length, onSave });
   useDeckKeys(deck);
   return { ids, deck };
 }

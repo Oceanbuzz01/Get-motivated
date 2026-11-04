@@ -12,23 +12,95 @@ button { font: inherit; }
   --inset-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* — dark mode: follows the phone's setting. The same Organic ramps, stepped for
+   a dark ground; card fills use the 100–300 steps, so those turn dark too. — */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-bg: #1c1a18;
+    --color-surface: #27241f;
+    --color-text: #f3ead9;
+    --color-divider: color-mix(in srgb, #f3ead9 18%, transparent);
+    --color-accent: #d98a52;
+    --color-neutral-100: #2a2622;
+    --color-neutral-200: #35302b;
+    --color-neutral-300: #433d36;
+    --color-neutral-400: #5a534b;
+    --color-neutral-500: #776e64;
+    --color-neutral-600: #948b80;
+    --color-neutral-700: #b5ac9f;
+    --color-neutral-800: #d6cdc0;
+    --color-neutral-900: #efe7da;
+    --color-accent-100: #3a2417;
+    --color-accent-200: #4b2d1a;
+    --color-accent-300: #6b3d20;
+    --color-accent-400: #95552b;
+    --color-accent-500: #c06d38;
+    --color-accent-600: #e09160;
+    --color-accent-700: #f0a676;
+    --color-accent-800: #ffc6a5;
+    --color-accent-900: #ffe1d0;
+    --color-accent-2-100: #222a1b;
+    --color-accent-2-200: #2d3724;
+    --color-accent-2-300: #3c4a2e;
+    --color-accent-2-400: #55663f;
+    --color-accent-2-500: #728157;
+    --color-accent-2-600: #8fa073;
+    --color-accent-2-700: #aebf92;
+    --color-accent-2-800: #ccdbb2;
+    --color-accent-2-900: #e1eecc;
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / .35);
+    --shadow-md: 0 3px 12px rgb(0 0 0 / .45);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / .55);
+  }
+  .btn-primary:hover { background: var(--color-accent-600); }
+}
+
 .device { height: 100%; background: var(--color-bg); }
 .screen {
-  position: relative; height: 100%; overflow: hidden;
+  position: relative; height: 100%; overflow: hidden; isolation: isolate;
   display: flex; flex-direction: column;
   color: var(--color-text); font-family: var(--font-body);
-  /* Rainforest photo under a cream veil: strongest at the top and bottom,
-     where text and controls sit straight on the background. */
-  --veil: linear-gradient(to bottom,
-    color-mix(in srgb, var(--color-bg) 90%, transparent) 0%,
-    color-mix(in srgb, var(--color-bg) 62%, transparent) 26%,
-    color-mix(in srgb, var(--color-bg) 30%, transparent) 55%,
-    color-mix(in srgb, var(--color-bg) 70%, transparent) 82%,
-    color-mix(in srgb, var(--color-bg) 92%, transparent) 100%);
-  background: var(--veil), url('../assets/rainforest.jpg') center / cover no-repeat, var(--color-bg);
+  background: var(--color-bg);
+  /* Light of the moment: the veil takes a tint from the time of day. */
+  --tint: var(--color-bg);
+  --veil-color: color-mix(in srgb, var(--color-bg) 82%, var(--tint));
+  --photo: url('../assets/rainforest.jpg');
 }
-/* Bewaard and Ik have running text all the way down, so the veil stays even. */
-.screen.page { --veil: linear-gradient(color-mix(in srgb, var(--color-bg) 84%, transparent), color-mix(in srgb, var(--color-bg) 84%, transparent)); }
+/* One photo per part of the day. The rainforest photo is small, so it is shown
+   softly out of focus; the sunrise and sunset photos are sharp. */
+.screen[data-daypart='morning'] { --tint: #ffc98a; --photo: url('../assets/sunrise.jpg'); --photo-blur: 0px; --photo-pos: 50% 60%; }
+.screen[data-daypart='day']     { --tint: var(--color-bg); --photo: url('../assets/rainforest.jpg'); --photo-blur: 3px; }
+.screen[data-daypart='evening'] { --tint: #f0a676; --photo: url('../assets/sunset.jpg'); --photo-blur: 0px; }
+.screen[data-daypart='night']   { --tint: #6f86b8; --photo: url('../assets/sunset.jpg'); --photo-blur: 0px; }
+
+.screen::before {
+  content: ''; position: absolute; inset: -16px; z-index: -2; pointer-events: none;
+  background: var(--photo) var(--photo-pos, center) / cover no-repeat;
+  filter: blur(var(--photo-blur, 3px)) saturate(.95);
+}
+.screen[data-daypart='night']::before { filter: brightness(.55) saturate(.8); }
+/* The veil keeps text readable: strongest at the top and bottom, where text and
+   controls sit straight on the photo. */
+.screen::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom,
+    color-mix(in srgb, var(--veil-color) 90%, transparent) 0%,
+    color-mix(in srgb, var(--veil-color) 62%, transparent) 26%,
+    color-mix(in srgb, var(--veil-color) 30%, transparent) 55%,
+    color-mix(in srgb, var(--veil-color) 70%, transparent) 82%,
+    color-mix(in srgb, var(--veil-color) 92%, transparent) 100%);
+}
+@media (prefers-color-scheme: dark) {
+  .screen::after { background: linear-gradient(to bottom,
+    color-mix(in srgb, var(--veil-color) 92%, transparent) 0%,
+    color-mix(in srgb, var(--veil-color) 72%, transparent) 26%,
+    color-mix(in srgb, var(--veil-color) 50%, transparent) 55%,
+    color-mix(in srgb, var(--veil-color) 78%, transparent) 82%,
+    color-mix(in srgb, var(--veil-color) 94%, transparent) 100%); }
+}
+/* Pages with running text all the way down get an even veil. */
+.screen.page::after { background: color-mix(in srgb, var(--veil-color) 86%, transparent); }
 .inset-top { flex: none; height: var(--inset-top); }
 .inset-bottom { flex: none; height: var(--inset-bottom); }
 
@@ -36,6 +108,7 @@ button { font: inherit; }
 @media (min-width: 520px) and (min-height: 820px) {
   :root { --inset-top: 32px; --inset-bottom: 20px; }
   body { background: #e9dcc6; }
+  @media (prefers-color-scheme: dark) { body { background: #12110f; } }
   #root { display: grid; place-items: center; padding: 24px; }
   .device {
     width: 376px; height: 796px; padding: 8px; flex: none;
@@ -186,3 +259,109 @@ button { font: inherit; }
   background: var(--color-accent); color: var(--color-bg);
 }
 .toast.high { bottom: calc(var(--inset-bottom) + 170px); }
+
+/* — theme pills: own colour and icon per theme — */
+.theme-tag { gap: 5px; background: var(--t-bg); color: var(--t-fg); font-weight: 600; }
+.theme-tag svg { flex: none; }
+@media (prefers-color-scheme: dark) {
+  .theme-tag { background: color-mix(in srgb, var(--t-fg) 62%, #000); color: var(--t-bg); }
+}
+
+/* — confetti for Gedaan — */
+.confetti {
+  position: absolute; width: 8px; height: 8px; z-index: 30; pointer-events: none;
+  animation: confetti .9s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes confetti {
+  0%   { transform: translate(-50%, -50%) scale(.6); opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 40px)) rotate(var(--r)) scale(1); opacity: 0; }
+}
+
+/* — search and theme filter — */
+.search-box {
+  display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 12px 0 14px; margin: 0 22px 8px;
+  border-radius: 999px; background: var(--color-neutral-100); border: 1px solid var(--color-divider); color: var(--color-neutral-700);
+}
+.search-box:focus-within { border-color: var(--color-accent); }
+.search-box input { flex: 1; min-width: 0; border: 0; outline: none; background: none; font: inherit; font-size: 15px; color: var(--color-text); }
+.search-box input::-webkit-search-cancel-button { display: none; }
+.search-clear { border: 0; background: none; color: inherit; cursor: pointer; padding: 4px; display: grid; }
+.theme-filter {
+  display: flex; gap: 6px; overflow-x: auto; padding: 0 22px 8px; flex: none; scrollbar-width: none;
+}
+.theme-filter::-webkit-scrollbar { display: none; }
+.theme-chip { flex: none; border: 2px solid transparent; cursor: pointer; height: 30px; padding: 0 10px; font-size: 12px; }
+.theme-chip[aria-checked='true'] { border-color: var(--t-fg); }
+@media (prefers-color-scheme: dark) { .theme-chip[aria-checked='true'] { border-color: var(--t-bg); } }
+.result-day { font-size: 12px; color: var(--color-neutral-700); font-weight: 600; }
+
+/* — streak, week overview, mood — */
+.streak-pill {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 3px 8px; border-radius: 999px;
+  background: var(--color-accent-200); color: var(--color-accent-800); font-size: 12px; font-weight: 700; letter-spacing: 0; text-transform: none;
+}
+.summary-card {
+  background: var(--color-neutral-100); border-radius: 28px; box-shadow: var(--shadow-sm);
+  padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 12px;
+}
+.summary-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { display: flex; flex-direction: column; gap: 2px; padding: 10px 8px; border-radius: 18px; background: var(--color-neutral-200); text-align: center; }
+.stat-num { font-family: var(--font-heading); font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat-label { font-size: 11px; color: var(--color-neutral-700); line-height: 1.3; }
+.summary-title { font-family: var(--font-heading); font-size: 18px; line-height: 1.2; }
+.mood-picker { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.mood-option {
+  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 2px; border-radius: 16px; cursor: pointer;
+  border: 2px solid transparent; background: none; color: var(--color-neutral-700); font-size: 11px; font-weight: 600;
+}
+.mood-option:hover { background: var(--color-neutral-200); }
+.mood-option[aria-checked='true'] { border-color: var(--color-accent); background: var(--color-accent-100); color: var(--color-accent-800); }
+.mood-chart { margin: 0; }
+.mood-bar { fill: var(--color-accent-500); }
+.mood-bar.is-sel { fill: var(--color-accent-700); }
+.mood-none { fill: var(--color-neutral-400); }
+.mood-grid { stroke: var(--color-divider); stroke-dasharray: 3 4; }
+.mood-axis { stroke: var(--color-neutral-400); }
+.mood-tick { font-size: 10px; fill: var(--color-neutral-700); font-family: var(--font-body); }
+.mood-caption { font-size: 12px; color: var(--color-neutral-800); margin-top: 2px; }
+.day-mood { color: var(--color-accent-700); flex: none; display: grid; }
+
+/* — evening question — */
+.evening-card {
+  position: absolute; left: 14px; right: 14px; bottom: calc(var(--inset-bottom) + 12px); z-index: 25;
+  background: var(--color-neutral-100); border-radius: 28px; box-shadow: var(--shadow-lg);
+  padding: 16px 14px 12px; display: flex; flex-direction: column; gap: 10px;
+  animation: toast-in .3s cubic-bezier(.2,.8,.2,1);
+}
+.evening-head { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+
+/* — larger text: the whole screen scales, so layout stays in proportion — */
+.screen { zoom: var(--z, 1); }
+.screen[data-text='groot'] { --z: 1.12; }
+.screen[data-text='extra'] { --z: 1.2; }
+.device > .screen { height: calc(100% / var(--z, 1)); }
+@media (min-width: 520px) and (min-height: 820px) {
+  .device > .screen { width: calc(360px / var(--z, 1)); height: calc(780px / var(--z, 1)); }
+}
+
+/* — settings — */
+.choice { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--color-neutral-100); border: 1px solid var(--color-divider); }
+.choice-opt {
+  flex: 1; min-width: 0; height: 36px; border: 0; border-radius: 999px; cursor: pointer; background: none;
+  color: var(--color-neutral-800); font-size: 13px; font-weight: 600; white-space: nowrap; padding: 0 6px;
+}
+.choice-opt:hover { background: var(--color-neutral-200); }
+.choice-opt[aria-checked='true'] { background: var(--color-accent); color: var(--color-bg); }
+.theme-pref { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.theme-pref .choice { align-self: stretch; }
+
+/* Card text takes the free space and scrolls inside the card if it is too long
+   (large text sizes); the card itself never grows past its slot. */
+.card-text { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: inherit; overflow-y: auto; scrollbar-width: none; }
+.card-text::-webkit-scrollbar { display: none; }
+/* Bottom-aligned text: a spacer that shrinks away when the text is long, so
+   the start of the text stays reachable. Vertical swipes scroll the text,
+   sideways swipes still move the card. */
+.card-text.end::before { content: ''; flex: 1 1 0; margin-bottom: calc(-1 * 14px); }
+.card-text { touch-action: pan-y; }
