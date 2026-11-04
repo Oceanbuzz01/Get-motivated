@@ -1,6 +1,22 @@
+import groei from './tips/groei.js';
+import zelfcompassie from './tips/zelfcompassie.js';
+import mindfulness from './tips/mindfulness.js';
+import rust from './tips/rust.js';
+import focus from './tips/focus.js';
+import gevoel from './tips/gevoel.js';
+import dankbaarheid from './tips/dankbaarheid.js';
+import moed from './tips/moed.js';
+import verbinding from './tips/verbinding.js';
+import zelfvertrouwen from './tips/zelfvertrouwen.js';
+import loslaten from './tips/loslaten.js';
+import lichaam from './tips/lichaam.js';
+import hoop from './tips/hoop.js';
+import creativiteit from './tips/creativiteit.js';
+import geluk from './tips/geluk.js';
+
 // The tip pool. A tip's position in this list is its id (saved tips and
 // "Probeer vandaag" ticks store it), so only ever append new tips at the end.
-export const TIPS = [
+const BASE_TIPS = [
   { tag: 'Groei', title: 'Je hoeft het niet in één keer goed te doen.', body: 'Vooruitgang is ook: vandaag een klein beetje verder dan gisteren. Kleine stappen tellen echt.', try: 'Schrijf één ding op dat je vandaag beter deed dan gisteren.' },
   { tag: 'Zelfcompassie', title: 'Praat tegen jezelf zoals tegen een goede vriend.', body: 'Je zou een vriend niet afkraken om een foutje. Gun jezelf diezelfde mildheid.', try: 'Vervang één strenge gedachte door een vriendelijke zin.' },
   { tag: 'Mindfulness', title: 'Gedachten zijn geen feiten.', body: 'Merk een gedachte op en geef hem een naam — "ah, daar is de twijfel" — en laat hem weer voorbijdrijven.', try: 'Noem vandaag drie keer een gedachte bij naam.' },
@@ -145,11 +161,28 @@ export const TIPS = [
   { tag: 'Dankbaarheid', title: 'Begin de dag met een dankjewel.', body: 'Wie de dag start met iets goeds, kijkt anders naar wat er komt.', try: 'Noem morgen bij het opstaan één ding waar je dankbaar voor bent.' }
 ];
 
-// Tips shown per day: one deck. Until the switch day it was 7; days before
-// then keep their original 7 so the history shows what was really dealt.
+// 1000 more tips, one file per theme. Ids continue after the 140 above in this
+// exact order, so only ever add to the end of a list or add a new file last.
+const EXTRA = [
+  ['Groei', groei], ['Zelfcompassie', zelfcompassie], ['Mindfulness', mindfulness],
+  ['Rust', rust], ['Focus', focus], ['Gevoel', gevoel], ['Dankbaarheid', dankbaarheid],
+  ['Moed', moed], ['Verbinding', verbinding], ['Zelfvertrouwen', zelfvertrouwen],
+  ['Loslaten', loslaten], ['Lichaam', lichaam], ['Hoop', hoop],
+  ['Creativiteit', creativiteit], ['Geluk', geluk]
+].flatMap(([tag, list]) => list.map(([title, body, tr]) => ({ tag, title, body, try: tr })));
+
+export const TIPS = [...BASE_TIPS, ...EXTRA];
+
+// Tips shown per day: one deck. The schedule changed twice; earlier days keep
+// exactly what they showed, so the history stays true:
+//   until 2 Nov 2026: 7 a day from the first 140 tips
+//   3 and 4 Nov 2026: 15 a day from the first 140 tips
+//   from 5 Nov 2026:  15 a day from all tips, new ones first
 export const DAILY = 15;
 const LEGACY_DAILY = 7;
+const BASE_COUNT = BASE_TIPS.length;
 const SWITCH_DAY = dayNumber(new Date(2026, 10, 3));
+const BIG_POOL_DAY = dayNumber(new Date(2026, 10, 5));
 
 // The day the app went live; history never goes back further than this.
 export const LAUNCH_DAY = dayNumber(new Date(2026, 9, 15));
@@ -175,9 +208,8 @@ function mulberry32(seed) {
   };
 }
 
-function shuffledPool(round) {
-  const ids = TIPS.map((_, i) => i);
-  const rand = mulberry32(round + 1);
+function shuffle(ids, seed) {
+  const rand = mulberry32(seed);
   for (let i = ids.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1));
     [ids[i], ids[j]] = [ids[j], ids[i]];
@@ -185,36 +217,51 @@ function shuffledPool(round) {
   return ids;
 }
 
+const range = (from, to) => Array.from({ length: to - from }, (_, i) => from + i);
+
 export function dayNumber(date = new Date()) {
   return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000);
 }
 
 const EPOCH = dayNumber(new Date(2026, 0, 1));
 
-// The order tips are dealt in during a round, cached per deck size. Each round
+// The order tips are dealt in during a round, cached per schedule. Each round
 // is a fresh shuffle, except that tips dealt late in the previous round stay
 // late, so a tip never comes back within a few days of being shown.
+const SCHEDULES = {
+  // The first 140 tips, from 1 January 2026.
+  base7: { perDay: LEGACY_DAILY, count: BASE_COUNT, epoch: EPOCH, seed: 1,
+    // The 7-a-day schedule kept the second half of the whole pool late.
+    lateFrom: (n) => Math.ceil(n / 2), lateTo: (n) => n },
+  base15: { perDay: DAILY, count: BASE_COUNT, epoch: EPOCH, seed: 1 },
+  // All tips, from 5 November 2026. Its first round deals the new tips first,
+  // so after the switch you get weeks of tips you have never seen.
+  all15: { perDay: DAILY, count: null, epoch: BIG_POOL_DAY, seed: 5001,
+    first: () => [...shuffle(range(BASE_COUNT, TIPS.length), 5000), ...shuffle(range(0, BASE_COUNT), 4999)] }
+};
 const orders = {};
-function roundOrder(round, perDay) {
-  const rounds = (orders[perDay] ??= []);
+
+function roundOrder(name, round) {
+  const sc = SCHEDULES[name];
+  const n = sc.count ?? TIPS.length;
+  const used = Math.floor(n / sc.perDay) * sc.perDay;
+  const rounds = (orders[name] ??= []);
   for (let r = rounds.length; r <= round; r++) {
-    const order = shuffledPool(r);
-    if (r === 0) { rounds.push(order); continue; }
-    // The 7-a-day schedule kept the second half of the whole pool late; keep it
-    // unchanged so its days still come out the same.
-    const used = perDay === LEGACY_DAILY ? order.length : Math.floor(order.length / perDay) * perDay;
-    const late = new Set(rounds[r - 1].slice(Math.ceil(used / 2), used));
+    if (r === 0) { rounds.push(sc.first ? sc.first() : shuffle(range(0, n), sc.seed)); continue; }
+    const order = shuffle(range(0, n), sc.seed + r);
+    const late = new Set(rounds[r - 1].slice(sc.lateFrom ? sc.lateFrom(n) : Math.ceil(used / 2), sc.lateTo ? sc.lateTo(n) : used));
     rounds.push([...order.filter((i) => !late.has(i)), ...order.filter((i) => late.has(i))]);
   }
   return rounds[round];
 }
 
-function deal(dayNum, perDay) {
-  const perRound = Math.floor(TIPS.length / perDay);
-  const day = Math.max(0, dayNum - EPOCH);
+function deal(name, dayNum) {
+  const sc = SCHEDULES[name];
+  const perRound = Math.floor((sc.count ?? TIPS.length) / sc.perDay);
+  const day = Math.max(0, dayNum - sc.epoch);
   const round = Math.floor(day / perRound);
   const slot = day - round * perRound;
-  return roundOrder(round, perDay).slice(slot * perDay, slot * perDay + perDay);
+  return roundOrder(name, round).slice(slot * sc.perDay, slot * sc.perDay + sc.perDay);
 }
 
 /**
@@ -223,7 +270,9 @@ function deal(dayNum, perDay) {
  * new round starts in a new order. Every device gets the same tips per day.
  */
 export function tipsForDay(dayNum) {
-  return dayNum < SWITCH_DAY ? deal(dayNum, LEGACY_DAILY) : deal(dayNum, DAILY);
+  if (dayNum < SWITCH_DAY) return deal('base7', dayNum);
+  if (dayNum < BIG_POOL_DAY) return deal('base15', dayNum);
+  return deal('all15', dayNum);
 }
 
 export function todaysTips(date = new Date()) {

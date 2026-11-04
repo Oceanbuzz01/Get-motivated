@@ -20,7 +20,7 @@ npm run build    # static output in dist/
 
 ## Notes
 
-- The pool has 140 tips (`src/tips.js`); each day deals 15 (7 until 3 November 2026; earlier days keep their 7, so the history stays true). A tip returns after at least 5 days. **Geschiedenis** lists every day since you started (`firstDay` in the store, or the launch day for older installs) and shows that day's tips. Add tips at the end of the list only, because a tip's position is its id. "Probeer vandaag" ticks reset daily. Saved tips, name and style live in `localStorage`.
+- The pool has 1140 tips: 140 in `src/tips.js` and 1000 more in `src/tips/` (one file per theme, 15 themes). Each day deals 15. The schedule changed twice and earlier days keep exactly what they showed, so the history stays true: 7 a day from the first 140 until 2 November 2026, 15 a day from the first 140 on 3–4 November, and from 5 November 15 a day from all tips, with the 1000 new ones first (66 days of unseen tips), after which a tip returns after at least 39 days. Add tips at the end of a list or in a new file listed last, because a tip's position is its id. **Geschiedenis** lists every day since you started (`firstDay` in the store, or the launch day for older installs) and shows that day's tips.
 - On screens at least 520×820 the app is drawn inside the 360×780 handset frame from the design. On a phone it fills the screen and uses the device's own status bar and safe-area insets instead of the drawn ones.
 - Fonts are bundled through `@fontsource`, so they also work offline.
 - The background is a rainforest photo (`src/assets/rainforest.jpg`, supplied by the owner) under a cream veil defined on `.screen` in `src/styles/app.css`.
