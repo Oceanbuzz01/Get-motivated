@@ -1,5 +1,28 @@
+import { useState } from 'react';
 import Icon from '../components/Icon.jsx';
 import { TIPS } from '../tips.js';
+
+export const STATUSES = [
+  { id: 'todo', label: 'Wil ik doen' },
+  { id: 'busy', label: 'Mee bezig' },
+  { id: 'done', label: 'Gedaan' }
+];
+const statusOf = (store, id) => store.notes?.[id]?.status || 'todo';
+
+const FILTERS = [
+  { id: 'all', label: 'Alles', match: () => true },
+  { id: 'open', label: 'Te doen', match: (s) => s !== 'done' },
+  { id: 'done', label: 'Gedaan', match: (s) => s === 'done' }
+];
+
+export function StatusChip({ status }) {
+  const s = STATUSES.find((x) => x.id === status) || STATUSES[0];
+  return (
+    <span className={`status-chip status-${s.id}`}>
+      {s.id === 'done' && <Icon name="check" size={12} stroke={3.25} />}{s.label}
+    </span>
+  );
+}
 
 export function PageHead({ title, onBack }) {
   return (
@@ -14,37 +37,117 @@ export function PageHead({ title, onBack }) {
   );
 }
 
-/** Saved tips, newest first. */
-export default function Saved({ store, onBack, onShare }) {
+/** Saved tips, newest first, with their status and the start of your note. */
+export default function Saved({ store, onBack, openTip }) {
+  const [filter, setFilter] = useState('all');
+  const f = FILTERS.find((x) => x.id === filter);
+  const list = store.saved.filter((id) => f.match(statusOf(store, id)));
+
   return (
     <>
       <PageHead title="Bewaard" onBack={onBack} />
+      {store.saved.length > 0 && (
+        <div className="filter-row" role="radiogroup" aria-label="Filter">
+          {FILTERS.map((x) => {
+            const n = store.saved.filter((id) => x.match(statusOf(store, id))).length;
+            return (
+              <button key={x.id} role="radio" aria-checked={filter === x.id} className="filter-chip" onClick={() => setFilter(x.id)}>
+                {x.label} <span className="filter-count">{n}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
       <div className="page-body">
         {store.saved.length === 0 ? (
           <div className="empty">
             <strong>Nog niets bewaard.</strong>
             Veeg een tip naar rechts of tik op het hartje, dan vind je hem hier terug.
           </div>
-        ) : store.saved.map((idx) => {
-          const t = TIPS[idx];
+        ) : list.length === 0 ? (
+          <div className="empty">
+            <strong>{filter === 'done' ? 'Nog niets gedaan.' : 'Alles is gedaan.'}</strong>
+            {filter === 'done' ? 'Open een bewaarde tip en zet hem op Gedaan als je hem hebt uitgeprobeerd.' : 'Mooi zo. Bewaar een nieuwe tip om verder te gaan.'}
+          </div>
+        ) : list.map((id) => {
+          const t = TIPS[id];
+          const meta = store.notes?.[id];
           return (
-            <article key={idx} className="saved-card">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <button key={id} className="saved-card saved-link" onClick={() => openTip(id)}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                 <span className="tag tag-accent">{t.tag}</span>
-                <div style={{ display: 'flex', gap: 4 }}>
-                  <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-neutral-700)' }} onClick={() => onShare(t)} aria-label="Delen" title="Delen">
-                    <Icon name="share" size={18} />
-                  </button>
-                  <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-neutral-700)' }} onClick={() => store.unsave(idx)} aria-label="Verwijderen" title="Verwijderen">
-                    <Icon name="trash" size={18} />
-                  </button>
-                </div>
+                <StatusChip status={statusOf(store, id)} />
               </div>
               <div className="saved-title">{t.title}</div>
-              <div className="saved-body">{t.body}</div>
-            </article>
+              {meta?.note
+                ? <div className="saved-note">{meta.note}</div>
+                : <div className="saved-body">{t.body}</div>}
+              <div className="saved-more">{meta?.note ? 'Notitie bekijken' : 'Notitie toevoegen'} <Icon name="chevron" size={14} /></div>
+            </button>
           );
         })}
+      </div>
+    </>
+  );
+}
+
+const longDate = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
+
+/** One saved tip: choose a status and write what you did or noticed. */
+export function SavedTip({ store, id, onBack, onShare }) {
+  const t = TIPS[id];
+  const meta = store.notes?.[id] || { status: 'todo', note: '' };
+  const [confirming, setConfirming] = useState(false);
+  const saved = store.saved.includes(id);
+
+  return (
+    <>
+      <PageHead title="Bewaarde tip" onBack={onBack} />
+      <div className="page-body" style={{ gap: 18 }}>
+        <article className="saved-card">
+          <span className="tag tag-accent" style={{ alignSelf: 'flex-start' }}>{t.tag}</span>
+          <div className="saved-title">{t.title}</div>
+          <div className="saved-body">{t.body}</div>
+          <div className="saved-try"><strong>Probeer:</strong> {t.try}</div>
+        </article>
+
+        <div>
+          <div className="field-label" id="status-label">Hoe staat het ervoor?</div>
+          <div className="status-options" role="radiogroup" aria-labelledby="status-label">
+            {STATUSES.map((s) => (
+              <button key={s.id} role="radio" aria-checked={meta.status === s.id} className={`status-option status-${s.id}`}
+                onClick={() => store.setNote(id, { status: s.id })}>
+                {s.id === 'done' && <Icon name="check" size={16} stroke={3.25} />}{s.label}
+              </button>
+            ))}
+          </div>
+          {meta.status === 'done' && meta.doneAt && <div className="field-hint">Gedaan op {longDate(meta.doneAt)}</div>}
+        </div>
+
+        <div className="field">
+          <label htmlFor={`note-${id}`}>Wat heb je gedaan of gemerkt?</label>
+          <textarea id={`note-${id}`} className="input note-input" rows={5} value={meta.note || ''}
+            placeholder="Bijvoorbeeld: vanochtend vijf minuten zonder telefoon ontbeten. Voelde rustiger."
+            onChange={(e) => store.setNote(id, { note: e.target.value })} />
+          <div className="field-hint">Wordt vanzelf bewaard{meta.savedAt ? ` · bewaard op ${longDate(meta.savedAt)}` : ''}</div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button className="btn btn-secondary" style={{ height: 44, padding: '0 18px', gap: 8 }} onClick={() => onShare(t)}>
+            <Icon name="share" size={16} />Delen
+          </button>
+          {saved && !confirming && (
+            <button className="btn btn-secondary" style={{ height: 44, padding: '0 18px', gap: 8 }} onClick={() => setConfirming(true)}>
+              <Icon name="trash" size={16} />Niet meer bewaren
+            </button>
+          )}
+          {saved && confirming && (
+            <>
+              <button className="btn btn-primary" style={{ height: 44, padding: '0 18px' }} onClick={() => { store.unsave(id); onBack(); }}>Ja, weghalen</button>
+              <button className="btn btn-secondary" style={{ height: 44, padding: '0 18px' }} onClick={() => setConfirming(false)}>Annuleren</button>
+            </>
+          )}
+        </div>
       </div>
     </>
   );

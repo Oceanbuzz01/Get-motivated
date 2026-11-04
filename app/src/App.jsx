@@ -5,7 +5,7 @@ import { dayNumber } from './tips.js';
 import HomeA from './screens/HomeA.jsx';
 import HomeB from './screens/HomeB.jsx';
 import HomeC from './screens/HomeC.jsx';
-import Saved from './screens/Saved.jsx';
+import Saved, { SavedTip } from './screens/Saved.jsx';
 import History, { Day } from './screens/History.jsx';
 import Me from './screens/Me.jsx';
 import Onboarding from './screens/Onboarding.jsx';
@@ -14,7 +14,7 @@ const HOMES = { a: HomeA, b: HomeB, c: HomeC };
 
 function BottomNav({ screen, go, saved }) {
   const item = (id, icon, label, badge) => (
-    <button className="nav-item" aria-current={screen === id || (id === 'history' && screen === 'day') ? 'page' : undefined} onClick={() => go(id)}>
+    <button className="nav-item" aria-current={screen === id || (id === 'history' && screen === 'day') || (id === 'saved' && screen === 'tip') ? 'page' : undefined} onClick={() => go(id)}>
       <div className="pill"><Icon name={icon} />{badge}</div>
       {label}
     </button>
@@ -36,6 +36,8 @@ export default function App() {
   const toastTimer = useRef();
   const [day, setDay] = useState(dayNumber);
   const [openDay, setOpenDay] = useState(null);
+  const [openTip, setOpenTip] = useState(null);
+  const [tipBack, setTipBack] = useState('saved');
 
   // When the app comes back into view on a new day, deal the new day's tips.
   useEffect(() => {
@@ -47,11 +49,28 @@ export default function App() {
   // A reset sends you back through onboarding from the start.
   useEffect(() => { if (!store.onboarded) setScreen('home'); }, [store.onboarded]);
 
-  const flash = useCallback((msg) => {
+  const flash = useCallback((msg, action) => {
     clearTimeout(toastTimer.current);
-    setToast(msg);
-    toastTimer.current = setTimeout(() => setToast(null), 1800);
+    setToast({ msg, action });
+    toastTimer.current = setTimeout(() => setToast(null), action ? 4000 : 1800);
   }, []);
+
+  const showTip = useCallback((id, from) => {
+    setOpenTip(id); setTipBack(from); setScreen('tip'); setToast(null);
+  }, []);
+
+  // Right after saving a tip, offer to add a note without getting in the way.
+  const lastSaved = useRef(store.saved[0]);
+  const savedCount = useRef(store.saved.length);
+  useEffect(() => {
+    const first = store.saved[0];
+    const grew = store.saved.length > savedCount.current;
+    savedCount.current = store.saved.length;
+    if (grew && first !== lastSaved.current && (screen === 'home' || screen === 'day')) {
+      flash('Tip bewaard', { label: 'Notitie toevoegen', run: () => showTip(first, screen === 'day' ? 'day' : 'home') });
+    }
+    lastSaved.current = first;
+  }, [store.saved, screen, flash, showTip]);
 
   const share = useCallback(async (tip) => {
     const text = `${tip.title} ${tip.body}\n\nWe can do this.`;
@@ -75,7 +94,8 @@ export default function App() {
 
   let content;
   if (!store.onboarded) content = <Onboarding store={store} />;
-  else if (screen === 'saved') content = <Saved store={store} onBack={back} onShare={share} />;
+  else if (screen === 'saved') content = <Saved store={store} onBack={back} openTip={(id) => showTip(id, 'saved')} />;
+  else if (screen === 'tip' && openTip != null) content = <SavedTip store={store} id={openTip} onBack={() => setScreen(tipBack)} onShare={share} />;
   else if (screen === 'me') content = <Me store={store} onBack={back} />;
   else if (screen === 'history') content = <History store={store} onBack={back} openDay={(d) => { setOpenDay(d); setScreen('day'); }} />;
   else if (screen === 'day' && openDay != null) content = <Day store={store} day={openDay} onBack={() => setScreen('history')} onShare={share} />;
@@ -88,7 +108,12 @@ export default function App() {
         {content}
         {store.onboarded && tabs && <BottomNav screen={screen} go={setScreen} saved={store.saved.length} />}
         <div className="inset-bottom" />
-        {toast && <div className="toast" role="status">{toast}</div>}
+        {toast && (
+          <div className={`toast${toast.action ? ' has-action' : ''}${tabs && screen === 'home' ? ' high' : ''}`} role="status">
+            {toast.msg}
+            {toast.action && <button className="toast-action" onClick={toast.action.run}>{toast.action.label}</button>}
+          </div>
+        )}
       </main>
     </div>
   );
