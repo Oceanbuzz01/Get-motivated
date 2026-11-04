@@ -137,14 +137,15 @@ export default function App() {
         {content}
         {store.onboarded && tabs && <BottomNav screen={screen} go={setScreen} saved={store.saved.length} />}
         <div className="inset-bottom" />
+        {askMood && <div className="evening-backdrop" onClick={() => store.set({ moodAsked: day })} />}
         {askMood && (
-          <div className="evening-card" role="dialog" aria-label="Hoe was je dag?">
+          <div className="evening-card" role="dialog" aria-modal="true" aria-label="Hoe was je dag?">
             <div className="evening-head">
               <span className="summary-title">Hoe was je dag{store.name ? `, ${store.name}` : ''}?</span>
               <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-neutral-700)' }} aria-label="Later" title="Later"
                 onClick={() => store.set({ moodAsked: day })}><Icon name="x" size={18} /></button>
             </div>
-            <MoodPicker value={null} onPick={(lvl) => { store.setMood(day, lvl); flash('Dank je. Je vindt het terug in Geschiedenis.'); }} />
+            <MoodPicker value={null} onPick={(lvl) => { store.setMood(day, lvl); store.set({ moodAsked: day }); flash('Dank je. Je vindt het terug in Geschiedenis.'); }} />
           </div>
         )}
         {toast && (
